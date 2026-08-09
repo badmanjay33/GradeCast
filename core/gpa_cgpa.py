@@ -1,54 +1,12 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-# Grading system
-us = {
-    "name": "American",
-    "A": 4.0,
-    "A-": 3.7,
-    "B+": 3.3,
-    "B": 3.0,
-    "B-": 2.7,
-    "C+": 2.3,
-    "C": 2.0,
-    "C-": 1.7,
-    "D+": 1.3,
-    "D": 1.0,
-    "F": 0.0
-}
-
-nuc_ng = {
-    'name': 'NUC Nigeria',
-    'A': 5,
-    'B': 4,
-    'C': 3,
-    'D': 2,
-    'E': 1,
-    'F': 0
-        }
-# Polytechnics as Regulated by National Board for Technical Education (NBTE)
-# Some schools use {'D': 2.00, 'E': 1.50}
-nbte_ng = {
-    'name': 'NBTE Nigeria',
-    'A': 4,
-    'AB': 3.5,
-    'B': 3.25,
-    'BC': 3.00,
-    'C': 2.75,
-    'CD': 2.50,
-    'D': 2.25,
-    'E': 2.00,
-    'F': 0.00
-}
-class DataLoader:
-    def __init__(self, file_path):
-        ...
+from core.models import GradingSystem
 
 
 class Analyzer:
-    def __init__(self, path : str ='test_grades.csv', grading_system : dict = us):
-        self.df = pd.read_csv(path)
+    def __init__(self, data : pd.DataFrame , grading_system : GradingSystem):
+        self.df = data
         self.__grading_system = grading_system
         self.semesters = self.df['Semester'].unique()
 
@@ -90,8 +48,6 @@ class Analyzer:
             gpas.append(self.gpa(sem))
         return gpas
 
-    def gpa_max(self):
-        return list(self.__grading_system.values())[1]
 
 
 class Forecaster(Analyzer):
@@ -118,8 +74,3 @@ def gpa_visualiser(analyzer: Analyzer):
         plt.ylabel("Cumulative GPA")
         plt.show()
 
-
-analyzer = Analyzer(path='../test_data/test_grades.csv', grading_system=nuc_ng)
-print(analyzer.cgpa())
-print(analyzer.gpa('Fall 2024'))
-gpa_visualiser(analyzer)

@@ -6,7 +6,7 @@ class DataLoader:
     def __init__(self, file_path):
         self.file_path = file_path
         self.df = self.load()
-        self.clean()
+
 
     def load(self):
         _, ext = splitext(self.file_path)
@@ -22,8 +22,8 @@ class DataLoader:
             raise ValueError(f"Unsupported file format: {ext}")
 
     def clean(self):
-        self.df.dropna(inplace=True)
+        ...
 
 
     def data(self):
-        ...
+        return self.df
