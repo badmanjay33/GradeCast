@@ -2,3 +2,4 @@
 /.idea
 /core/__pycache__/
 requirements.txt
+main.py

@@ -1,6 +1,4 @@
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 from core.models import GradingSystem
 
 
@@ -47,30 +45,3 @@ class Analyzer:
         for sem in self.semesters:
             gpas.append(self.gpa(sem))
         return gpas
-
-
-
-class Forecaster(Analyzer):
-    def what_if(self, *expected_grades):
-        cgpa = self.cgpa()
-
-
-def gpa_visualiser(analyzer: Analyzer):
-    gpas = analyzer.all_gpas()
-    semesters = analyzer.semesters
-    if len(semesters) < 2:
-        print('Cannot visualise GPA trend with only one semester')
-    else:
-        sns.lineplot(x=semesters, y=gpas, marker='o', label='GPA')
-        for x_val, y_val in zip(semesters, gpas):
-            plt.text(x_val, y_val - 0.15, f'{y_val:.2f}',
-                 ha='center', va='top', color='tab:blue', fontweight='bold')
-
-        plt.ylim(0, analyzer.gpa_max())
-        print(gpas)
-        plt.legend(loc='lower right')
-        plt.title("GPA Trend")
-        plt.xlabel("Semester")
-        plt.ylabel("Cumulative GPA")
-        plt.show()
-

@@ -1,0 +1,9 @@
+class Forecaster:
+    def what_if(self, *expected_grades):
+        ...
+
+    def next_target(self):
+        ...
+
+    def goal_seeker(self):
+        ...
