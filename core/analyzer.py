@@ -17,12 +17,15 @@ class Analyzer:
         units = self.df['Units'].to_list()
         return self.calculate(grades, units)
 
-    def gpa(self, semester: str) -> float:
-        grades = self.semesters_data[semester]['Grade'].to_list()
-        units = self.semesters_data[semester]['Units'].to_list()
-        return self.calculate(grades, units)
+    def gpa(self, semester: str | None = None, grades : list | None = None, units: list | None = None) -> float:
+        if semester:
+            grades = self.semesters_data[semester]['Grade'].to_list()
+            units = self.semesters_data[semester]['Units'].to_list()
+            return self.calculate(grades, units)
+        else:
+            return self.calculate(grades, units)
 
-    def calculate(self, grades, units) -> float:
+    def calculate(self, grades : list, units : list) -> float:
         i = 0
         total_unit = 0
         grade_point = 0
