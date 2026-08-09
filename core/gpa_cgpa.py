@@ -26,7 +26,7 @@ nuc_ng = {
     'D': 2,
     'E': 1,
     'F': 0
-               }
+        }
 # Polytechnics as Regulated by National Board for Technical Education (NBTE)
 # Some schools use {'D': 2.00, 'E': 1.50}
 nbte_ng = {
@@ -41,6 +41,9 @@ nbte_ng = {
     'E': 2.00,
     'F': 0.00
 }
+class DataLoader:
+    def __init__(self, file_path):
+        ...
 
 
 class Analyzer:
@@ -92,8 +95,8 @@ class Analyzer:
 
 
 class Forecaster(Analyzer):
-    def what_if(self):
-        ...
+    def what_if(self, *expected_grades):
+        cgpa = self.cgpa()
 
 
 def gpa_visualiser(analyzer: Analyzer):
@@ -116,7 +119,7 @@ def gpa_visualiser(analyzer: Analyzer):
         plt.show()
 
 
-analyzer = Analyzer(path='test_grades.csv', grading_system=nuc_ng)
+analyzer = Analyzer(path='../test_data/test_grades.csv', grading_system=nuc_ng)
 print(analyzer.cgpa())
 print(analyzer.gpa('Fall 2024'))
 gpa_visualiser(analyzer)

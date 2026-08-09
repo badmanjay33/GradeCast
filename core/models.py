@@ -12,7 +12,7 @@ class GradingSystem:
     def points(self) -> list:
         return list(self.__grade_mapping.values())
 
-    def __getitem__(self, key) ->  int | float:
+    def __getitem__(self, key) -> int | float:
         try:
             return self.__grade_mapping[key]
         except KeyError:

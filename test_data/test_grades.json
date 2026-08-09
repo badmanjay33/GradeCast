@@ -1,0 +1,114 @@
+[
+    {
+        "Semester":"Fall 2024",
+        "Course Code":"CSC101",
+        "Course Title":"Introduction to Computer Science",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Fall 2024",
+        "Course Code":"MTH101",
+        "Course Title":"Calculus I",
+        "Units":4,
+        "Grade":"B"
+    },
+    {
+        "Semester":"Fall 2024",
+        "Course Code":"PHY101",
+        "Course Title":"General Physics I",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Fall 2024",
+        "Course Code":"ENG101",
+        "Course Title":"English Composition",
+        "Units":2,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Spring 2025",
+        "Course Code":"CSC102",
+        "Course Title":"Object-Oriented Programming",
+        "Units":3,
+        "Grade":"B"
+    },
+    {
+        "Semester":"Spring 2025",
+        "Course Code":"MTH102",
+        "Course Title":"Calculus II",
+        "Units":4,
+        "Grade":"C"
+    },
+    {
+        "Semester":"Spring 2025",
+        "Course Code":"PHY102",
+        "Course Title":"General Physics II",
+        "Units":3,
+        "Grade":"B"
+    },
+    {
+        "Semester":"Spring 2025",
+        "Course Code":"STA101",
+        "Course Title":"Introduction to Statistics",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Fall 2025",
+        "Course Code":"CSC201",
+        "Course Title":"Data Structures and Algorithms",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Fall 2025",
+        "Course Code":"CSC202",
+        "Course Title":"Computer Architecture",
+        "Units":3,
+        "Grade":"B"
+    },
+    {
+        "Semester":"Fall 2025",
+        "Course Code":"MTH201",
+        "Course Title":"Linear Algebra",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Fall 2025",
+        "Course Code":"GST201",
+        "Course Title":"General Studies",
+        "Units":2,
+        "Grade":"B"
+    },
+    {
+        "Semester":"Spring 2026",
+        "Course Code":"CSC203",
+        "Course Title":"Database Management",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Spring 2026",
+        "Course Code":"CSC204",
+        "Course Title":"Software Engineering",
+        "Units":3,
+        "Grade":"A"
+    },
+    {
+        "Semester":"Spring 2026",
+        "Course Code":"STA202",
+        "Course Title":"Probability Theory",
+        "Units":3,
+        "Grade":"C"
+    },
+    {
+        "Semester":"Spring 2026",
+        "Course Code":"ECO101",
+        "Course Title":"Introduction to Economics",
+        "Units":2,
+        "Grade":"B"
+    }
+]
