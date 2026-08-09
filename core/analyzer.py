@@ -32,14 +32,6 @@ class Analyzer:
             i += 1
         return round(grade_point/total_unit, 2)
 
-    @property
-    def grading_system(self) -> str:
-        return str(self.__grading_system['name'])
-
-    @grading_system.setter
-    def grading_system(self, grading_system):
-        self.__grading_system = grading_system
-
     def all_gpas(self):
         gpas = []
         for sem in self.semesters:
