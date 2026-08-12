@@ -1,5 +1,3 @@
-from unittest import result
-
 from core.analyzer import Analyzer
 from core.models import GradingSystem
 from core.visualiser import visualiser
@@ -70,6 +68,8 @@ class Forecaster:
         else:
             return expected_gpa
 
-    def goal_seeker(self):
-        ...
+    def goal_seeker(self, remaining_units: int, honour: str, semester_honours:str = None):
+        cgpa = self.analyzer.cgpa()
+        min = self.grading_system.graduation_honours.get(honour)
+        print(min)
         # tell it your remaining units and cgpa, and it tells you what you should get to reach an honor
