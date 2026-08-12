@@ -1,5 +1,8 @@
+from unittest import result
+
 from core.analyzer import Analyzer
 from core.models import GradingSystem
+from core.visualiser import visualiser
 
 
 class Forecaster:
@@ -7,7 +10,7 @@ class Forecaster:
         self.analyzer = analyzer
         self.grading_system = grading_system
 
-    def what_if(self, expected_grades : list, expected_units : list) -> dict [str, float]:
+    def what_if(self, expected_grades : list, expected_units : list, visualise: bool = False) -> dict [str, float]:
         # Expected GPA
         expected_semester_gpa = self.analyzer.calculate(expected_grades, expected_units)
 
@@ -30,12 +33,17 @@ class Forecaster:
         if final_units > 0:
             expected_cgpa = round((grade_points + expected_grade_points) / final_units, 2)
 
-        return {
+        result = {
             "expected_gpa": expected_semester_gpa,
             "expected_cgpa": expected_cgpa
         }
 
-    def next_target(self, expected_cgpa : float | int, expected_units : int) -> float | str:
+        if visualise:
+            visualiser(analyzer=self.analyzer, gp_max=self.grading_system.max_gpa, predictions=result)
+
+        return result
+
+    def next_target(self, expected_cgpa : float | int, expected_units : int, visualise: bool = False) -> float | str:
         if not (0 <= expected_cgpa <= self.grading_system.max_gpa):
             raise ValueError(f'Expected CGPA {expected_cgpa} is not in range of your grading system: {0}, {self.grading_system.max_gpa}')
 
@@ -46,6 +54,15 @@ class Forecaster:
         current_points = cgpa * current_units
 
         expected_gpa = round((target_points - current_points) / expected_units, 2)
+
+        if visualise:
+            visualiser(analyzer=self.analyzer, gp_max=self.grading_system.max_gpa,
+                       predictions={
+                            "expected_gpa": expected_gpa,
+                            "expected_cgpa": expected_cgpa
+                       }
+            )
+
         if expected_gpa > self.grading_system.max_gpa:
             return f'Not possible: You cannot achieve a CGPA of {expected_cgpa} with {expected_units}.\nTry taking more credits.'
         elif expected_gpa < 0:
