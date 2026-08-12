@@ -1,5 +1,6 @@
 /.venv
 /.idea
 /core/__pycache__/
+.env
 requirements.txt
 main.py
