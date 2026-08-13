@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from google.genai import errors
 import pandas as pd
+from core.models import GradingSystem
 
 
 class Advisor:
@@ -28,13 +29,13 @@ class Advisor:
         except Exception as e:
             return f"Failed to connect to the AI Advisor. Please check your connection. (Error: {e})"
 
-    def goal_seeker(self, remaining_units: int, honour: str) -> str:
+    def goal_seeker(self, remaining_units: int, honour: str, grading_system: GradingSystem) -> str:
         """Advises on the required GPA to hit a specific graduation honor."""
         cgpa = self.analyzer.cgpa()
         current_units = sum(self.analyzer.df['Units'].to_list())
-        max_system_gpa = self.analyzer.grading_system.max_gpa
+        max_system_gpa = grading_system.max_gpa
 
-        honor_data = self.analyzer.grading_system.graduation_honours.get(honour)
+        honor_data = grading_system.graduation_honours.get(honour)
         if not honor_data:
             return f"Honor '{honour}' not found in the grading system."
 
@@ -130,7 +131,7 @@ class Advisor:
         """
         return self._prompt(prompt)
 
-    def semester_review(self) -> str:
+    def semester_review(self, grading_system: GradingSystem) -> str:
         """Provides a retrospective debrief on the most recently completed semester."""
         latest_semester = self.analyzer.df.iloc[-1]['Semester']
         latest_df = self.analyzer.df[self.analyzer.df['Semester'] == latest_semester]
@@ -139,7 +140,7 @@ class Advisor:
         current_cgpa = self.analyzer.cgpa()
 
         # Calculate GPA for the latest semester
-        points = sum([self.analyzer.grading_system[g] * u for g, u in zip(latest_df['Grade'], latest_df['Units'])])
+        points = sum([grading_system[g] * u for g, u in zip(latest_df['Grade'], latest_df['Units'])])
         latest_gpa = round(points / latest_units, 2) if latest_units else 0.00
 
         prompt = f"""
