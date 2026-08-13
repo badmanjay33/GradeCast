@@ -35,7 +35,7 @@ class Analyzer:
             i += 1
         return round(grade_point/total_unit, 2)
 
-    def all_gpas(self):
+    def gpa_trend(self):
         gpas = []
         for sem in self.semesters:
             gpas.append(self.gpa(sem))

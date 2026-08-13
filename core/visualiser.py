@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from core.analyzer import Analyzer
 
-def visualiser(analyzer: Analyzer, gp_max: float, predictions: dict = None):
+def visualiser(analyzer: Analyzer, gp_max: float, predictions: dict = None, label: str = None, title: str = None):
     semesters : list = analyzer.semesters
-    gpas : list = analyzer.all_gpas()
+    gpas : list = analyzer.gpa_trend()
 
     if len(analyzer.semesters) < 2:
         print('Cannot visualise GPA trend with only one semester')
@@ -17,18 +17,18 @@ def visualiser(analyzer: Analyzer, gp_max: float, predictions: dict = None):
         if predictions:
             predicted_semesters = [semesters[-1], 'Next Semester']
             predicted_gpas = [gpas[-1], predictions.get('expected_gpa')]
-            sns.lineplot(x=predicted_semesters, y=predicted_gpas, marker='o', label='Predicted GPA')
+            sns.lineplot(x=predicted_semesters, y=predicted_gpas, marker='o', label=label)
             for x_val, y_val in zip(predicted_semesters, predicted_gpas):
                 plt.text(x_val, y_val - 0.15, f'{y_val:.2f}',
                          ha='center', va='top', color='tab:blue', fontweight='bold')
 
 
-        plt.ylim(0, gp_max)
+        plt.ylim(-0.1, gp_max + 0.1)
         plt.legend(loc='lower right')
         if predictions:
-            plt.title(f"GPA Trend (Predicted CGPA: {predictions.get('expected_cgpa')})")
+            plt.title(title)
         else:
-            plt.title(f"GPA Trend (CGPA: {analyzer.cgpa()})")
-        plt.xlabel("Semester")
-        plt.ylabel("Cumulative GPA")
+            plt.title(f"GPA Trend (Predicted CGPA: {analyzer.cgpa()})")
+        plt.xlabel("Semesters")
+        plt.ylabel("GPA")
         plt.show()

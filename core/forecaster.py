@@ -37,7 +37,13 @@ class Forecaster:
         }
 
         if visualise:
-            visualiser(analyzer=self.analyzer, gp_max=self.grading_system.max_gpa, predictions=result)
+            last_semester = self.analyzer.semesters[-1]
+            visualiser(
+                analyzer=self.analyzer,
+                gp_max=self.grading_system.max_gpa,
+                predictions=result,
+                title=f"What-if analysis (Predicted CGPA: {self.analyzer.cgpa()} | GPA Difference: {round((expected_semester_gpa - self.analyzer.gpa(last_semester)), 2)})",
+                label='Predicted GPA')
 
         return result
 
@@ -63,9 +69,11 @@ class Forecaster:
                            predictions={
                                "expected_gpa": expected_gpa,
                                "expected_cgpa": expected_cgpa
-                           }
+                           },
+                           title=f"Next target analysis (Expected CGPA {expected_cgpa} | Target GPA {expected_gpa})",
+                           label="Expected CGPA"
                            )
-            return {"expexted_gpa" : expected_gpa, "expected_cgpa" : expected_cgpa}
+            return {"expected_gpa" : expected_gpa, "expected_cgpa" : expected_cgpa}
 
     def goal_seeker(self, remaining_units: int, honour: str, semester_honours: str = None) -> str:
         # 1. Fetch current stats
