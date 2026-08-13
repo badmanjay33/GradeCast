@@ -41,7 +41,7 @@ class Forecaster:
                 analyzer=self.analyzer,
                 gp_max=self.grading_system.max_gpa,
                 predictions=result,
-                title=f"What-if analysis (Predicted CGPA: {self.analyzer.cgpa()} | GPA Difference: {round((expected_semester_gpa - self.analyzer.gpa(last_semester)), 2)})",
+                title=f"What-if analysis (Predicted CGPA: {expected_cgpa} | GPA Difference: {round((expected_semester_gpa - self.analyzer.gpa(last_semester)), 2)})",
                 label='Predicted GPA')
 
         return result
