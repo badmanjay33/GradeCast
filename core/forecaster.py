@@ -41,7 +41,7 @@ class Forecaster:
 
         return result
 
-    def next_target(self, expected_cgpa : float | int, expected_units : int, visualise: bool = False) -> float | str:
+    def next_target(self, expected_cgpa : float | int, expected_units : int, visualise: bool = False) -> dict | str:
         if not (0 <= expected_cgpa <= self.grading_system.max_gpa):
             raise ValueError(f'Expected CGPA {expected_cgpa} is not in range of your grading system: {0}, {self.grading_system.max_gpa}')
 
@@ -53,20 +53,19 @@ class Forecaster:
 
         expected_gpa = round((target_points - current_points) / expected_units, 2)
 
-        if visualise:
-            visualiser(analyzer=self.analyzer, gp_max=self.grading_system.max_gpa,
-                       predictions={
-                            "expected_gpa": expected_gpa,
-                            "expected_cgpa": expected_cgpa
-                       }
-            )
-
         if expected_gpa > self.grading_system.max_gpa:
             return f'Not possible: You cannot achieve a CGPA of {expected_cgpa} with {expected_units}.\nTry taking more credits.'
         elif expected_gpa < 0:
             return f"Not possible: You cannot achieve this CGPA even if you failed all your classes.\nBut trying aiming some a CGPA higher than yours."
         else:
-            return expected_gpa
+            if visualise:
+                visualiser(analyzer=self.analyzer, gp_max=self.grading_system.max_gpa,
+                           predictions={
+                               "expected_gpa": expected_gpa,
+                               "expected_cgpa": expected_cgpa
+                           }
+                           )
+            return {"expexted_gpa" : expected_gpa, "expected_cgpa" : expected_cgpa}
 
     def goal_seeker(self, remaining_units: int, honour: str, semester_honours: str = None) -> str:
         # 1. Fetch current stats
