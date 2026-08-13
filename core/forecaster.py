@@ -1,7 +1,7 @@
 from core.analyzer import Analyzer
 from core.models import GradingSystem
 from core.visualiser import visualiser
-
+from core.ai_insights import prompt
 
 class Forecaster:
     def __init__(self, analyzer: Analyzer, grading_system: GradingSystem):
@@ -68,8 +68,47 @@ class Forecaster:
         else:
             return expected_gpa
 
-    def goal_seeker(self, remaining_units: int, honour: str, semester_honours:str = None):
+    def goal_seeker(self, remaining_units: int, honour: str, semester_honours: str = None) -> str:
+        # 1. Fetch current stats
         cgpa = self.analyzer.cgpa()
-        min = self.grading_system.graduation_honours.get(honour)
-        print(min)
-        # tell it your remaining units and cgpa, and it tells you what you should get to reach an honor
+        current_units = sum(self.analyzer.df['Units'].to_list())
+        max_system_gpa = self.grading_system.max_gpa
+
+        # 2. Get the target thresholds
+        honor_data = self.grading_system.graduation_honours.get(honour)
+        if not honor_data:
+            raise ValueError(f"Honor '{honour}' not found in the grading system.")
+        target_cgpa = honor_data['min']
+
+        # 3. Calculate the required GPA
+        current_points = cgpa * current_units
+        target_total_points = target_cgpa * (current_units + remaining_units)
+        required_gpa = round((target_total_points - current_points) / remaining_units, 2)
+
+
+        prompt_ = f"""
+        [System Role]
+        You are an insightful, highly analytical, and encouraging academic advisor. Your tone is professional and realistic.
+
+        [Student Data]
+        - Current CGPA: {cgpa:.2f}
+        - Completed Units: {current_units}
+        - Remaining Units: {remaining_units}
+
+        [Student's Goal]
+        - Target Graduation Honor: {honour}
+        - Minimum CGPA Required: {target_cgpa}
+
+        [The Mathematical Reality]
+        - Required Average GPA across remaining units: {required_gpa:.2f}
+        - Maximum Possible GPA per semester: {max_system_gpa}
+
+        [Instructions]
+        Based on the mathematical reality above, write a concise, 3-to-4 sentence advisory message to the student:
+        1. If the 'Required Average GPA' is mathematically possible (less than or equal to {max_system_gpa}), tell them exactly what they need to maintain.
+        2. If the 'Required Average GPA' is mathematically impossible (greater than {max_system_gpa}), break the news gently and tell them to aim for the absolute maximum instead.
+        3. If the 'Required Average GPA' is below 0, congratulate them because they have mathematically secured the honor regardless of future performance.
+        """
+
+        return prompt(prompt_)
+
