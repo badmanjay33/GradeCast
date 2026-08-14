@@ -4,33 +4,70 @@ from dotenv import load_dotenv
 from google.genai import errors
 import pandas as pd
 from core.models import GradingSystem
+import time
 
 
 class Advisor:
     def __init__(self, analyzer, forecaster=None):
         load_dotenv()
-        self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY2"))
         self.analyzer = analyzer
         self.forecaster = forecaster
 
-        self.persona = "You are a relatable, direct, and highly practical academic mentor. You speak to students like a\
-        supportive and cool professor. Tone is conversational and upbeat. DO NOT use bureaucratic, overly\
-        formal, or dramatic language."
+        self.persona = ("You are a relatable, direct, and highly practical academic mentor. You speak to students like a\
+        supportive and cool professor. Tone is conversational and upbeat. DO NOT use bureaucratic, overly formal, or\
+                        dramatic language.")
 
     def _prompt(self, text: str) -> str:
-        try:
-            response = self.client.models.generate_content(
-                model='gemini-3.6-flash',
-                contents=text
-            )
-            return response.text
-        except errors.APIError:
-            return "AI Advisor is currently unavailable. The server is busy."
-        except Exception as e:
-            return f"Failed to connect to the AI Advisor. Please check your connection. (Error: {e})"
+        max_retries = 3
+
+        for attempt in range(max_retries):
+            try:
+                response = self.client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=text
+                )
+                return response.text
+
+            except errors.APIError as e:
+                if e.code == 429: # Rate Limits
+                    if attempt < max_retries - 1:
+                        sleep_time = 2 ** attempt
+
+                        # Override with Google's exact requested wait time if provided
+                        if hasattr(e, 'response') and e.response is not None:
+                            header_time = e.response.headers.get('Retry-After')
+                            if header_time and header_time.isdigit():
+                                sleep_time = int(header_time)
+
+                        print(f"[API] Rate limit hit. Retrying in {sleep_time}s...")
+                        time.sleep(sleep_time)
+                        continue
+
+                    # Final attempt failed
+                    retry_time = 60
+                    if hasattr(e, 'response') and e.response is not None:
+                        header_time = e.response.headers.get('Retry-After')
+                        if header_time and header_time.isdigit():
+                            retry_time = int(header_time)
+                    return f"Sorry, you're out of API tokens. Please wait {retry_time} seconds before asking the Advisor another question."
+
+                elif e.code == 503: # Server Overload
+                    if attempt < max_retries - 1:
+                        sleep_time = 2 ** attempt
+                        print(f"[API] Server overloaded. Retrying in {sleep_time}s...")
+                        time.sleep(sleep_time)
+                        continue
+                    return "The AI Advisor is currently experiencing a massive spike in global traffic.\nTry again in about 5 minutes!"
+
+                # Handle bad API Keys or other configuration issues (400, 401, 403, 404)
+                else:
+                    return f"The AI Advisor ran into configuration issues  (Error {e.code})."
+
+            except Exception as e:
+                return f"Failed to connect to the AI Advisor. Please check your internet connection. (Error: {e})"
 
     def goal_seeker(self, remaining_units: int, honour: str, grading_system: GradingSystem) -> str:
-        """Advises on the required GPA to hit a specific graduation honor."""
         cgpa = self.analyzer.cgpa()
         current_units = sum(self.analyzer.df['Units'].to_list())
         max_system_gpa = grading_system.max_gpa
@@ -63,7 +100,6 @@ class Advisor:
         return self._prompt(prompt)
 
     def what_if(self, expected_grades: list, expected_units: list) -> str:
-        """Analyzes a hypothetical upcoming semester."""
         if not self.forecaster:
             return "Forecaster module required for What-If Analysis."
 
@@ -85,7 +121,6 @@ class Advisor:
         return self._prompt(prompt)
 
     def progress_report(self, total_degree_units: int) -> str:
-        """Gives a high-level overview of degree completion and trajectory."""
         cgpa = self.analyzer.cgpa()
         current_units = sum(self.analyzer.df['Units'].to_list())
         percentage = (current_units / total_degree_units) * 100
@@ -105,7 +140,6 @@ class Advisor:
         return self._prompt(prompt)
 
     def subject_analysis(self) -> str:
-        """Identifies strengths and weaknesses based on course prefixes."""
         df = self.analyzer.df.copy()
 
         # Extract the subject prefix (e.g., "MAT 110" -> "MAT")
@@ -132,7 +166,6 @@ class Advisor:
         return self._prompt(prompt)
 
     def semester_review(self, grading_system: GradingSystem) -> str:
-        """Provides a retrospective debrief on the most recently completed semester."""
         latest_semester = self.analyzer.df.iloc[-1]['Semester']
         latest_df = self.analyzer.df[self.analyzer.df['Semester'] == latest_semester]
 
