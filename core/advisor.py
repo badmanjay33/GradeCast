@@ -10,7 +10,7 @@ import time
 class Advisor:
     def __init__(self, analyzer, forecaster=None):
         load_dotenv()
-        self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY2"))
+        self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY3"))
         self.analyzer = analyzer
         self.forecaster = forecaster
 
@@ -24,7 +24,7 @@ class Advisor:
         for attempt in range(max_retries):
             try:
                 response = self.client.models.generate_content(
-                    model='gemini-1.5-flash',
+                    model='gemini-3.8-flash',
                     contents=text
                 )
                 return response.text
@@ -62,7 +62,7 @@ class Advisor:
 
                 # Handle bad API Keys or other configuration issues (400, 401, 403, 404)
                 else:
-                    return f"The AI Advisor ran into configuration issues  (Error {e.code})."
+                    return f"The AI Advisor ran into configuration issues  (Error {e.message})."
 
             except Exception as e:
                 return f"Failed to connect to the AI Advisor. Please check your internet connection. (Error: {e})"
